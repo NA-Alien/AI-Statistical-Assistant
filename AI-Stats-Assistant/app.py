@@ -1,44 +1,64 @@
 import streamlit as st
 import pandas as pd
 import google.generativeai as genai
+import os
+from dotenv import load_dotenv
 
-# Setup API Key (Replace with your actual key for testing, but use secrets for GitHub)
-API_KEY = "YOUR_GEMINI_API_KEY_HERE"
-genai.configure(api_key=API_KEY)
-model = genai.GenerativeModel('gemini-1.5-flash')
+# 1. Securely Load API Key
+load_dotenv()
+api_key = os.getenv("GEMINI_API_KEY")
 
-st.set_page_config(page_title="AI Stats Assistant", layout="wide")
-st.title("🤖 AI Stats Assistant")
-st.markdown("Upload data and let the AI perform the heavy lifting for your analysis.")
+if not api_key:
+    st.error("API Key not found. Please check your .env file.")
+else:
+    genai.configure(api_key=api_key)
+    # Using the flash model for speed and cost-efficiency
+    model = genai.GenerativeModel('gemini-1.5-flash')
 
-# Sidebar for Upload
-uploaded_file = st.sidebar.file_uploader("Upload CSV Data", type="csv")
+# 2. UI Configuration
+st.set_page_config(page_title="AI Stats Interpreter", page_icon="📊")
+st.title("📊 AI Statistical Interpreter")
+st.markdown("""
+    This assistant uses **Generative AI** to analyze datasets, verify conditions, 
+    and draft formal statistical reports.
+""")
+
+# 3. Sidebar and File Upload
+st.sidebar.header("Upload Data")
+uploaded_file = st.sidebar.file_uploader("Choose a CSV file", type="csv")
 
 if uploaded_file:
     df = pd.read_csv(uploaded_file)
-    st.write("### Data Preview", df.head())
+    st.dataframe(df.head(10), use_container_width=True)
     
-    # Select a column for analysis
     cols = df.select_dtypes(include=['number']).columns.tolist()
-    selection = st.selectbox("Which variable should the AI analyze?", cols)
+    target = st.selectbox("Select variable for AI reasoning:", cols)
     
-    if st.button("Generate AI Insights"):
-        # Prepare the data summary for the AI
-        stats_summary = df[selection].describe().to_string()
+    if st.button("Run AI Analysis"):
+        # Generate stats for the AI to "see"
+        desc_stats = df[target].describe().to_dict()
         
+        # Crafting the Professional Prompt
         prompt = f"""
-        Act as an AP Statistics Reader. Analyze this dataset for the variable '{selection}':
-        {stats_summary}
+        CONTEXT: You are a Lead Data Scientist. 
+        DATA SUMMARY for variable '{target}': {desc_stats}
         
-        1. Describe the Shape, Center, and Spread.
-        2. Identify if there are potential outliers using the 1.5xIQR rule.
-        3. Suggest the most appropriate inference test (e.g., 1-Sample T-Test) and state the conditions needed.
-        Keep the tone professional and tuned for 11th grade academic writing.
+        TASK:
+        1. Interpret the distribution (Shape, Center, Spread).
+        2. Specifically check for outliers using the 1.5xIQR method.
+        3. Draft a 'Conclusion' as if for an AP Statistics Free Response Question (FRQ).
+        4. Suggest one follow-up experiment or data collection method to improve results.
+        
+        STYLE: Clear, academic, and concise. No conversational filler.
         """
         
-        with st.spinner("AI is thinking..."):
-            response = model.generate_content(prompt)
-            st.write("### AI Statistical Interpretation")
-            st.info(response.text)
+        with st.spinner("Analyzing data patterns..."):
+            try:
+                response = model.generate_content(prompt)
+                st.subheader("AI Findings")
+                st.markdown(response.text)
+            except Exception as e:
+                st.error(f"An error occurred: {e}")
+
 else:
-    st.info("Upload a CSV to get started with AI-powered insights.")
+    st.info("Waiting for dataset upload...")
