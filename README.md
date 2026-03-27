@@ -33,3 +33,22 @@ To launch the dashboard, run:
 ```bash
 py -m streamlit run app.py
 ```
+
+## Uploading Data
+Ensure files uploaded are .csv files (e.g. `dataset1.csv`) 
+
+Format data within these files in this way:
+```
+Study_Hours,Test_Score
+2,65
+3,70
+4,75
+5,80
+6,85
+7,88
+8,92
+9,95
+10,99
+1,40
+```
+
