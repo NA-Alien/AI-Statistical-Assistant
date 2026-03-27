@@ -1,4 +1,4 @@
-# AI Statistical Interpreter (2026 Edition)
+# AI Statistical Interpreter
 
 An intelligent data reasoning engine built with Python, Streamlit, and the **Google GenAI 2.0 SDK**. This application automates the "State-Plan-Do-Conclude" workflow for statistical analysis by leveraging the Gemini 3 Flash model.
 
