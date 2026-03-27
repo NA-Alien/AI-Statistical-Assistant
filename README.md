@@ -1,9 +1,8 @@
-# AI Statistical Interpreter (2026 Edition)
+# AI Statistical Interpreter 
 
 An intelligent data reasoning engine built with Python, Streamlit, and the **Google GenAI 2.0 SDK**. This application automates statistical analysis and provides a persistent chat interface for interactive data exploration using the Gemini 3 Flash model.
 
-## Technical Evolution (March 2026)
-This project has been fully refactored to meet current industry standards:
+## Technical Evolution 
 * **SDK Migration:** Transitioned from the deprecated `google-generativeai` to the modern `google-genai` client.
 * **Gemini 3 Integration:** Upgraded the reasoning engine to **Gemini 3 Flash**, resolving 404 errors associated with retired 1.5-series models.
 * **Persistent Chat:** Implemented `st.session_state` to maintain conversation memory, allowing for iterative follow-up questions.
