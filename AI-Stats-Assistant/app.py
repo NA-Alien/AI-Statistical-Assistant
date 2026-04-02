@@ -16,7 +16,7 @@ else:
 
 # 2. UI Configuration
 st.set_page_config(page_title="AI Stats Interpreter", page_icon="📊")
-st.title("📊 AI Statistical Interpreter")
+st.title("AI Statistical Interpreter")
 
 # 3. Initialize Chat History in Session State
 if "messages" not in st.session_state:
